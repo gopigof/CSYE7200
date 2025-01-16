@@ -2,16 +2,12 @@ name: CI
 
 on:
   push:
+  pull_request:
 
 jobs:
   trigger-tests:
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        scala-version: ['2.13.14']
-        projects: ['assignment-helloworld'] # List all your modules here
 
     steps:
     - name: Checkout
@@ -25,10 +21,7 @@ jobs:
         java-version: 11
         distribution: 'temurin'
 
-#    - name: Install dependencies
-#      run: sbt dependencyTree  # Adjust this command based on how you install dependencies in SBT
-
-    - name: Run tests for changed modules only
+    - name: Run tests for changed projects only
       run: |
         modified_projects=$(git diff --name-only HEAD^ HEAD | grep 'asst' | cut -d/ -f9 -s | sort -u)
         for project in $modified_projects; do
